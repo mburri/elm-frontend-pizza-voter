@@ -9,16 +9,18 @@ main = App.beginnerProgram {model = model, view = view, update = update}
 
 -- Model
 
+type alias Id = Int
+
 type alias Pizza =
     { name: String
     , votes: Int
-    , id: Int
+    , id: Id
     }
 
 type alias Model =
     { pizzas: List Pizza
     , new: String
-    , uid: Int
+    , uid: Id
     }
 
 model: Model
@@ -28,7 +30,7 @@ model =
     , uid = 0
     }
 
-newPizza: String -> Int -> Pizza
+newPizza: String -> Id -> Pizza
 newPizza name id =
     { name = name
     , votes = 0
@@ -58,19 +60,14 @@ update msg model =
                         model.pizzas ++ [newPizza model.new model.uid]
         }
         Like id ->
-            { model | pizzas = List.map (likePizza id) model.pizzas }
+            { model | pizzas = List.map (modifyPizza id 1) model.pizzas }
         Dislike id ->
-            { model | pizzas = List.map (disLikePizza id) model.pizzas }
+            { model | pizzas = List.map (modifyPizza id -1) model.pizzas }
 
+modifyPizza: Id -> Int -> Pizza -> Pizza
+modifyPizza id change pizza =
+    if pizza.id == id then { pizza | votes = pizza.votes + change } else pizza
 
-likePizza: Int -> Pizza -> Pizza
-likePizza id pizza =
-    if pizza.id == id then { pizza | votes = pizza.votes + 1 } else pizza
-
-
-disLikePizza: Int -> Pizza -> Pizza
-disLikePizza id pizza =
-    if pizza.id == id then { pizza | votes = pizza.votes - 1 } else pizza
 -- View
 view: Model -> Html Msg
 view model =
