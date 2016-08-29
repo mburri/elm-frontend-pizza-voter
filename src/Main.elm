@@ -12,23 +12,27 @@ main = App.beginnerProgram {model = model, view = view, update = update}
 type alias Pizza =
     { name: String
     , votes: Int
+    , id: Int
     }
 
 type alias Model =
     { pizzas: List Pizza
     , new: String
+    , uid: Int
     }
 
 model: Model
 model =
     { pizzas = []
     , new = ""
+    , uid = 0
     }
 
-newPizza: String -> Pizza
-newPizza name =
+newPizza: String -> Int -> Pizza
+newPizza name id =
     { name = name
     , votes = 0
+    , id = id
     }
 
 -- Update
@@ -46,11 +50,12 @@ update msg model =
         Add ->
             { model
                 | new = ""
+                , uid = model.uid + 1
                 , pizzas =
                     if String.isEmpty model.new then
                         model.pizzas
                     else
-                        model.pizzas ++ [newPizza model.new]
+                        model.pizzas ++ [newPizza model.new model.uid]
         }
         Like ->
             model
@@ -75,7 +80,8 @@ viewAllPizzas pizzas =
 viewPizza: Pizza -> Html Msg
 viewPizza pizza =
     li []
-       [ text pizza.name
+       [ text (toString pizza.id)
+       , text pizza.name
        , button [onClick Dislike] [text "-"]
        , text (toString pizza.votes)
        , button [onClick Like] [text "+"]
