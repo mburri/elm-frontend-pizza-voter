@@ -70,4 +70,13 @@ view model =
 viewAllPizzas: List Pizza -> Html Msg
 viewAllPizzas pizzas =
     ul []
-       (List.map (\pizza -> li [] [text pizza.name]) pizzas)
+       (List.map viewPizza pizzas)
+
+viewPizza: Pizza -> Html Msg
+viewPizza pizza =
+    li []
+       [ text pizza.name
+       , button [onClick Dislike] [text "-"]
+       , text (toString pizza.votes)
+       , button [onClick Like] [text "+"]
+       ]
