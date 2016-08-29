@@ -39,8 +39,8 @@ newPizza name id =
 type Msg
     = Add
     | UpdateField String
-    | Like
-    | Dislike
+    | Like Int
+    | Dislike Int
 
 update: Msg -> Model -> Model
 update msg model =
@@ -57,11 +57,20 @@ update msg model =
                     else
                         model.pizzas ++ [newPizza model.new model.uid]
         }
-        Like ->
-            model
-        Dislike ->
-            model
+        Like id ->
+            { model | pizzas = List.map (likePizza id) model.pizzas }
+        Dislike id ->
+            { model | pizzas = List.map (disLikePizza id) model.pizzas }
 
+
+likePizza: Int -> Pizza -> Pizza
+likePizza id pizza =
+    if pizza.id == id then { pizza | votes = pizza.votes + 1 } else pizza
+
+
+disLikePizza: Int -> Pizza -> Pizza
+disLikePizza id pizza =
+    if pizza.id == id then { pizza | votes = pizza.votes - 1 } else pizza
 -- View
 view: Model -> Html Msg
 view model =
@@ -82,7 +91,7 @@ viewPizza pizza =
     li []
        [ text (toString pizza.id)
        , text pizza.name
-       , button [onClick Dislike] [text "-"]
+       , button [onClick (Dislike pizza.id)] [text "-"]
        , text (toString pizza.votes)
-       , button [onClick Like] [text "+"]
+       , button [onClick (Like pizza.id)] [text "+"]
        ]
