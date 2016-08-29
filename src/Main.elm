@@ -1,5 +1,5 @@
 import Html.App as App
-import Html exposing (Html, text, div, input, h1, button)
+import Html exposing (Html, text, div, input, h1, button, ul, li)
 import Html.Attributes exposing (placeholder, value)
 import Html.Events exposing (onInput, onClick)
 
@@ -60,18 +60,14 @@ update msg model =
 -- View
 view: Model -> Html Msg
 view model =
-    let
-        pizzaEntries =
-            List.map viewPizza model.pizzas
-    in
-        div []
-            ([ h1 [] [text "Pizza voter"]
-            , input [placeholder "add your favorite pizza!", onInput UpdateField, value model.new] []
-            , button [onClick Add] [text "add"]
-            ] ++ pizzaEntries)
-
-viewPizza: Pizza -> Html Msg
-viewPizza pizza =
     div []
-        [ text pizza.name
+        [ h1 [] [text "Pizza voter"]
+        , input [placeholder "add your favorite pizza!", onInput UpdateField, value model.new] []
+        , button [onClick Add] [text "add"]
+        , viewAllPizzas model.pizzas
         ]
+
+viewAllPizzas: List Pizza -> Html Msg
+viewAllPizzas pizzas =
+    ul []
+       (List.map (\pizza -> li [] [text pizza.name]) pizzas)
