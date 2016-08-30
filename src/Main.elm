@@ -50,15 +50,7 @@ update msg model =
         UpdateField str ->
             { model | new = str }
         Add ->
-            { model
-                | new = ""
-                , uid = model.uid + 1
-                , pizzas =
-                    if String.isEmpty model.new then
-                        model.pizzas
-                    else
-                        model.pizzas ++ [newPizza model.new model.uid]
-        }
+            addPizza model
         Like id ->
             { model | pizzas = List.map (modifyPizza id 1) model.pizzas }
         Dislike id ->
@@ -67,6 +59,18 @@ update msg model =
 modifyPizza: Id -> Int -> Pizza -> Pizza
 modifyPizza id change pizza =
     if pizza.id == id then { pizza | votes = pizza.votes + change } else pizza
+
+addPizza: Model -> Model
+addPizza model =
+    { model
+        | new = ""
+        , uid = model.uid + 1
+        , pizzas =
+            if String.isEmpty model.new then
+                model.pizzas
+            else
+                model.pizzas ++ [newPizza model.new model.uid]
+    }
 
 -- View
 view: Model -> Html Msg
