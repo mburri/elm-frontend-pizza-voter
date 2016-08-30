@@ -1,3 +1,7 @@
+module Main exposing (..)
+
+import Pizza
+
 import Html.App as App
 import Html exposing (Html, text, div, input, h1, button, ul, li)
 import Html.Attributes exposing (placeholder, value)
@@ -11,14 +15,9 @@ main = App.beginnerProgram {model = model, view = view, update = update}
 
 type alias Id = Int
 
-type alias Pizza =
-    { name: String
-    , votes: Int
-    , id: Id
-    }
 
 type alias Model =
-    { pizzas: List Pizza
+    { pizzas: List Pizza.Model
     , new: String
     , uid: Id
     }
@@ -30,7 +29,7 @@ model =
     , uid = 0
     }
 
-newPizza: String -> Id -> Pizza
+newPizza: String -> Id -> Pizza.Model
 newPizza name id =
     { name = name
     , votes = 0
@@ -56,7 +55,7 @@ update msg model =
         Dislike id ->
             { model | pizzas = List.map (modifyPizza id -1) model.pizzas }
 
-modifyPizza: Id -> Int -> Pizza -> Pizza
+modifyPizza: Id -> Int -> Pizza.Model -> Pizza.Model
 modifyPizza id change pizza =
     if pizza.id == id then { pizza | votes = pizza.votes + change } else pizza
 
@@ -82,12 +81,12 @@ view model =
         , viewAllPizzas model.pizzas
         ]
 
-viewAllPizzas: List Pizza -> Html Msg
+viewAllPizzas: List Pizza.Model -> Html Msg
 viewAllPizzas pizzas =
     ul []
        (List.map viewPizza pizzas)
 
-viewPizza: Pizza -> Html Msg
+viewPizza: Pizza.Model -> Html Msg
 viewPizza pizza =
     li []
        [ text (toString pizza.id)
