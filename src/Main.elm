@@ -29,13 +29,6 @@ model =
     , uid = 0
     }
 
-newPizza: String -> Id -> Pizza.Model
-newPizza name id =
-    { name = name
-    , votes = 0
-    , id = id
-    }
-
 -- Update
 type Msg
     = Add
@@ -51,13 +44,11 @@ update msg model =
         Add ->
             addPizza model
         Like id ->
-            { model | pizzas = List.map (modifyPizza id 1) model.pizzas }
+            { model | pizzas = List.map (Pizza.modifyPizza id 1) model.pizzas }
         Dislike id ->
-            { model | pizzas = List.map (modifyPizza id -1) model.pizzas }
+            { model | pizzas = List.map (Pizza.modifyPizza id -1) model.pizzas }
 
-modifyPizza: Id -> Int -> Pizza.Model -> Pizza.Model
-modifyPizza id change pizza =
-    if pizza.id == id then { pizza | votes = pizza.votes + change } else pizza
+
 
 addPizza: Model -> Model
 addPizza model =
@@ -68,7 +59,7 @@ addPizza model =
             if String.isEmpty model.new then
                 model.pizzas
             else
-                model.pizzas ++ [newPizza model.new model.uid]
+                model.pizzas ++ [Pizza.newPizza model.new model.uid]
     }
 
 -- View
