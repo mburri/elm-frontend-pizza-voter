@@ -74,8 +74,15 @@ view model =
 
 viewAllPizzas: List Pizza.Model -> Html Msg
 viewAllPizzas pizzas =
-    ul []
-       (List.map viewPizza pizzas)
+    let
+        sortByVotes a b =
+            case compare a.votes b.votes of
+              LT -> GT
+              EQ -> EQ
+              GT -> LT
+    in
+        ul []
+           (List.map viewPizza (List.sortWith sortByVotes pizzas))
 
 viewPizza: Pizza.Model -> Html Msg
 viewPizza pizza =
